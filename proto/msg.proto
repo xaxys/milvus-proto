@@ -135,6 +135,17 @@ message ImportFile {
   // Unset means the ids are allocated during the import.
   common.IDRange pre_allocated_auto_ids = 3;
 }
+
+// ImportTaskVersion is an internal execution compatibility marker carried in
+// ImportMsg so pending broadcaster tasks, WAL recovery, and CDC forwarding can
+// preserve the selected import implementation during rolling upgrades.
+// Zero/absent values are interpreted by Milvus as the legacy V2 path.
+enum ImportTaskVersion {
+  IMPORT_TASK_VERSION_UNSPECIFIED = 0;
+  IMPORT_TASK_VERSION_V2 = 2;
+  IMPORT_TASK_VERSION_V3 = 3;
+}
+
 message ImportMsg {
   common.MsgBase base = 1;
   string db_name = 2;
@@ -146,4 +157,5 @@ message ImportMsg {
   schema.CollectionSchema schema = 8;
   int64 jobID = 9;
   string idempotency_key = 10;
+  ImportTaskVersion import_task_version = 11;
 }
